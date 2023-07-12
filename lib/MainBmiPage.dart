@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'calculator.dart';
+import 'genderIcons.dart';
+import 'resusableCards.dart';
 
 class MainBmiPage extends StatefulWidget {
   const MainBmiPage({super.key, required this.title});
@@ -12,14 +14,20 @@ class MainBmiPage extends StatefulWidget {
   State<MainBmiPage> createState() => _MainBmiPageState();
 }
 
+enum gender1 { male, female }
+
 class _MainBmiPageState extends State<MainBmiPage> {
   Color activeCardColor = Color(0XFFFFFFFF);
+  Color deactivatedCardColor = Colors.deepPurple;
+  Color maleCardColor = Color(0XFFFFFFFF);
+  Color femaleCardColor = Color(0XFFFFFFFF);
   Color bottomContainerColor = Color(0XFFFFFFFF);
   double height = 1.0;
   int weight = 80;
   int age = 25;
   String gender = "male";
   double bmi = 0;
+  bool iconSelected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -46,32 +54,21 @@ class _MainBmiPageState extends State<MainBmiPage> {
           Row(
             children: [
               Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    gender = 'male';
+                child: GestureDetector(
+                  onTap: () {
                     print("Male Gender Selected");
+                    setState(() {
+                      gender = 'male';
+                      iconSelected = true;
+                      maleCardColor = deactivatedCardColor;
+                      femaleCardColor = activeCardColor;
+                    });
                   },
                   child: ReusableCard(
-                    cardsColor: activeCardColor,
-                    childCard: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          FontAwesomeIcons.mars,
-                          size: 80,
-                          color: Colors.redAccent,
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Text(
-                          "Male",
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: Color(0XFF4E555B),
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                    cardsColor: maleCardColor,
+                    childCard: GenderIcons(
+                      icon_label: 'male',
+                      icon_color: Colors.redAccent,
                     ),
                   ),
                 ),
@@ -80,31 +77,17 @@ class _MainBmiPageState extends State<MainBmiPage> {
                 child: TextButton(
                   onPressed: () {
                     print("Female gender selected");
-                    gender = 'female';
+                    setState(() {
+                      gender = 'female';
+                      femaleCardColor = deactivatedCardColor;
+                      maleCardColor = activeCardColor;
+                    });
                   },
                   child: ReusableCard(
-                    cardsColor: activeCardColor,
-                    childCard: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          FontAwesomeIcons.venus,
-                          size: 80,
-                          color: Colors.redAccent,
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Text(
-                          "Female",
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: Color(0XFF4E555B),
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
+                      cardsColor: femaleCardColor,
+                      childCard: GenderIcons(
+                        icon_label: "female",
+                      )),
                 ),
               ),
             ],
@@ -275,7 +258,10 @@ class _MainBmiPageState extends State<MainBmiPage> {
                   height: height, gender: gender, age: age, weight: weight);
               bmi = calculator.calculateBMI();
               bmi = double.parse(bmi.toStringAsFixed(1));
+              Navigator.pushNamed(context, '/result', arguments: bmi);
+
               print("BMI is: $bmi");
+              print(bmi.runtimeType);
             },
             child: Container(
               margin: EdgeInsets.only(top: 10),
@@ -305,27 +291,6 @@ class _MainBmiPageState extends State<MainBmiPage> {
             ),
           )
         ],
-      ),
-    );
-  }
-}
-
-class ReusableCard extends StatelessWidget {
-  ReusableCard({required this.cardsColor, this.childCard});
-
-  final Color cardsColor;
-  final Widget? childCard;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: childCard,
-      margin: const EdgeInsets.all(15),
-      height: 180,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: cardsColor,
       ),
     );
   }

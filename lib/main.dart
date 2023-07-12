@@ -1,3 +1,4 @@
+import 'package:bmi_calculator/result.dart';
 import 'package:flutter/material.dart';
 
 import 'MainBmiPage.dart';
@@ -13,7 +14,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MainBmiPage(title: 'BMI Calculator'),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => MainBmiPage(title: 'BMI Calculator'),
+        '/result': (context) => Result(),
+      },
     );
   }
 }
